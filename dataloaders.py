@@ -137,17 +137,17 @@ class dataset_isles2018_segmentation(torch.utils.data.Dataset):
         else:
             raise Exception("Invalid subset, subsets: train, test")
 
-class dataset_brats2015_segmentation(torch.utils.data.Dataset):
+class dataset_brats2019_segmentation(torch.utils.data.Dataset):
     def __init__(self, path, subset):
-        self.root_dir1 = path+'brats2015/'+subset+'/Flair/'
-        self.root_dir2 = path+'brats2015/'+subset+'/T1/'
-        self.root_dir3 = path+'brats2015/'+subset+'/T1c/'
-        self.root_dir4 = path+'brats2015/'+subset+'/T2/'
+        self.root_dir1 = path+'brats2019/'+subset+'/t1/'
+        self.root_dir2 = path+'brats2019/'+subset+'/t1ce/'
+        self.root_dir3 = path+'brats2019/'+subset+'/t2/'
+        self.root_dir4 = path+'brats2019/'+subset+'/flair/'
         self.subset = subset
-        if(subset == 'train'):
-            self.root_dir5 = path+'brats2015/'+subset+'/OT/'
-        elif(subset != 'test'):
-            raise Exception("Invalid subset, subsets: train, test")
+        if(subset == 'TRAIN'):
+            self.root_dir5 = path+'brats2019/'+subset+'/seg/'
+        elif(subset != 'VALID'):
+            raise Exception("Invalid subset, subsets: TRAIN, VALID")
         self.filelist1 = glob.glob(self.root_dir1+'*.png')
         self.transform = transforms.Compose([transforms.Grayscale(), transforms.ToTensor(), transforms.Normalize([.5], [.5])])
         
@@ -180,14 +180,76 @@ class dataset_brats2015_segmentation(torch.utils.data.Dataset):
         x3 = self.transform(x3)
         x4 = self.transform(x4)
 
-        if(self.subset == 'train'):
+        if(self.subset == 'TRAIN'):
+            pair5 = self.root_dir5 + filename
+            y = io.imread(pair5)
+            y = np.uint8(y)
+            y1 = np.where((y == 63), np.uint8(1), np.uint8(0))
+            y2 = np.where((y == 127), np.uint8(1), np.uint8(0))
+            y4 = np.where((y == 255), np.uint8(1), np.uint8(0))
+            y1 = Image.fromarray(y1)
+            y1 = self.transform(y1)
+            y2 = Image.fromarray(y2)
+            y2 = self.transform(y2)
+            y4 = Image.fromarray(y4)
+            y4 = self.transform(y4)
+            return x1, x2, x3, x4, y1, y2, y4
+        elif(self.subset == 'VALID'):
+            return x1, x2, x3, x4
+        else:
+            raise Exception("Invalid subset, subsets: TRAIN, VALID")
+
+class dataset_brats2019_synthesis(torch.utils.data.Dataset):
+    def __init__(self, path, subset):
+        self.root_dir1 = path+'brats2019/'+subset+'/t1/'
+        self.root_dir2 = path+'brats2019/'+subset+'/t1ce/'
+        self.root_dir3 = path+'brats2019/'+subset+'/t2/'
+        self.root_dir4 = path+'brats2019/'+subset+'/flair/'
+        self.subset = subset
+        if(subset == 'TRAIN'):
+            self.root_dir5 = path+'brats2019/'+subset+'/sem/'
+        elif(subset != 'VALID'):
+            raise Exception("Invalid subset, subsets: TRAIN, VALID")
+        self.filelist1 = glob.glob(self.root_dir1+'*.png')
+        self.transform = transforms.Compose([transforms.Grayscale(), transforms.ToTensor(), transforms.Normalize([.5], [.5])])
+        
+    def __len__(self):
+        return len(self.filelist1)
+    
+    def __getitem__(self, idx):
+        x1 = io.imread(self.filelist1[idx])
+        cut = self.filelist1[idx].rfind("/")
+        filename = self.filelist1[idx][cut+1:]
+        pair2 = self.root_dir2 + filename
+        pair3 = self.root_dir3 + filename
+        pair4 = self.root_dir4 + filename
+        x2 = io.imread(pair2)
+        x3 = io.imread(pair3)
+        x4 = io.imread(pair4)
+
+        x1 = np.uint8(x1)
+        x2 = np.uint8(x2)
+        x3 = np.uint8(x3)
+        x4 = np.uint8(x4)
+
+        x1 = Image.fromarray(x1)
+        x2 = Image.fromarray(x2)
+        x3 = Image.fromarray(x3)
+        x4 = Image.fromarray(x4)
+
+        x1 = self.transform(x1)
+        x2 = self.transform(x2)
+        x3 = self.transform(x3)
+        x4 = self.transform(x4)
+
+        if(self.subset == 'TRAIN'):
             pair5 = self.root_dir5 + filename
             y = io.imread(pair5)
             y = np.uint8(y)
             y = Image.fromarray(y)
             y = self.transform(y)
             return x1, x2, x3, x4, y
-        elif(self.subset == 'test'):
+        elif(self.subset == 'VALID'):
             return x1, x2, x3, x4
         else:
-            raise Exception("Invalid subset, subsets: train, test")
+            raise Exception("Invalid subset, subsets: TRAIN, VALID")

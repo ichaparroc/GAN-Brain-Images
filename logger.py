@@ -40,7 +40,7 @@ class Logger:
     Logger._make_dir(out_dir)
     fig.savefig('{}/{}_epoch_{}_batch_{}.png'.format(out_dir, self.data_subdir, epoch, n_batch))
 
-  def display_status(self, epoch, num_epochs, n_batch, num_batches, d_error, g_error, d_pred_real, d_pred_fake):
+"""  def display_status(self, epoch, num_epochs, n_batch, num_batches, d_error, g_error, d_pred_real, d_pred_fake):
 
     # var_class = torch.autograd.variable.Variable
     if isinstance(d_error, torch.autograd.Variable):
@@ -63,7 +63,7 @@ class Logger:
            '{}/G_epoch_{}'.format(out_dir, epoch))
     torch.save(discriminator.state_dict(),
            '{}/D_epoch_{}'.format(out_dir, epoch))
-
+"""
   @staticmethod
   def _step(epoch, n_batch, num_batches):
     return epoch * num_batches + n_batch

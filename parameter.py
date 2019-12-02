@@ -9,21 +9,19 @@ def get_parameters():
 
 	# Model hyper-parameters
 
-	parser.add_argument('dataset',      type=str,   default='',		choices=['basel', 'isles2018', 'brats2015'])
-	parser.add_argument('task',         type=str,   default='',		choices=['segmentation', 'synthesis'])
-	
-	parser.add_argument('--type_label',	type=str,   default='./',	choices=['label', 'label_input'])
+	parser.add_argument('--dataset', type=str, default='brats2019', choices=['basel', 'isles2018', 'brats2019'])
+	parser.add_argument('--task', type=str, default='segmentation', choices=['segmentation', 'synthesis'])
 
-	parser.add_argument('--data_path',  type=str,   default='./')
+	parser.add_argument('--type_label',	type=str, default='label',choices=['label', 'label_input'])
 
-	
+	parser.add_argument('--data_path', type=str, default='../')
 
-	parser.add_argument('--batch_size', type=int,   default=128)
-	parser.add_argument('--num_epochs', type=int,   default=200)
-	parser.add_argument('--sample_size',type=int,   default=3)
-	parser.add_argument('--lr',         type=float, default=0.0002)
-	parser.add_argument('--beta1',      type=float, default=0.5)
-	parser.add_argument('--beta2',      type=float, default=0.999)
+	parser.add_argument('--batch_size', type=int, default=128)
+	parser.add_argument('--num_epochs', type=int, default=200)
+	parser.add_argument('--sample_size',type=int, default=3)
+	parser.add_argument('--lr', type=float, default=0.0002)
+	parser.add_argument('--beta1', type=float, default=0.5)
+	parser.add_argument('--beta2', type=float, default=0.999)
 	
 	#parser.add_argument('--z_dim', type=int, default=128)
 	
